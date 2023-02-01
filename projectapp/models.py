@@ -1,26 +1,33 @@
 from django.db import models
 
-quality = (('HIGH','high'),('LOW','low'),('MEDIUM','medium'))
-size = ((10,'TEN'),(20,'TWENTY'),(30,'THIRTY'))
-colour = (('RED','red'),('BLUE','blue'),('GREEN','green'),('BLACK','black'))
-
-
 class ProductMainModel(models.Model):
-    Title = models.CharField(max_length=100)
-    Description = models.TextField(max_length=700)
-    Price = models.DecimalField(max_digits=9,decimal_places=2)
-    Size = models.CharField(max_length=50, choices = size)
-    Quality = models.CharField(max_length=50, choices = quality)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.FloatField()
+    unique_code = models.CharField(max_length=100, unique=True)
+    SIZE_CHOICES = [
+        (10, 10),
+        (20, 20),
+        (30, 30),
+    ]
+    size = models.IntegerField(choices=SIZE_CHOICES)
+    QUALITY_CHOICES = [
+        ('high', 'High'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+    ]
+    quality = models.CharField(max_length=10, choices=QUALITY_CHOICES)
 
-class productColourModel(models.Model):
-    table1 = models.ForeignKey(ProductMainModel,on_delete=models.CASCADE)
-    Product = models.CharField(max_length=500)
-    Colour = models.CharField(max_length=50, choices = colour)
+class ProductColourModel(models.Model):
+    product = models.ForeignKey(ProductMainModel, on_delete=models.CASCADE)
+    COLOUR_CHOICES = [
+        ('red', 'Red'),
+        ('blue', 'Blue'),
+        ('green', 'Green'),
+        ('black', 'Black'),
+    ]
+    colour = models.CharField(max_length=10, choices=COLOUR_CHOICES)
 
-class productImageModel(models.Model):
-    table1 = models.ManyToManyField(ProductMainModel)
-    table2 = models.ManyToManyField(productColourModel)
-    Product = models.CharField(max_length=500)
-    Image = models.ImageField()
-
-    
+class ProductImageModel(models.Model):
+    product = models.ForeignKey(ProductMainModel, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='product_images/')
